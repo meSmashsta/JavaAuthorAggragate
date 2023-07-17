@@ -42,7 +42,7 @@ public class CodingExercise {
     // Implement the following function to find books with a particular word in the title
     //**********************************************************************************************
     public static Stream<Book> BooksWithWordInTitle(Stream<Book> books, String wordToFind) {
-        return null;
+        return books.filter(b -> b.name.toLowerCase().contains(wordToFind.toLowerCase()));
     }
 
     //**********************************************************************************************
@@ -52,7 +52,27 @@ public class CodingExercise {
     // written
     //**********************************************************************************************
     public static List<AuthorWithBooks> ExtractAuthors(List<Book> books) {
-      return null;
+        Map<String, List<Book>> authorAndBooksDict = new HashMap<>();
+        for (Book book : books) {
+            for (Author author : book.authors) {
+                List<Book> booksOfAuthor = authorAndBooksDict.get(author.name);
+                if (booksOfAuthor == null) {
+                    booksOfAuthor = new ArrayList<>();
+                    authorAndBooksDict.put(author.name, booksOfAuthor);
+                }
+                booksOfAuthor.add(book);
+            }
+        }
+
+        List<AuthorWithBooks> authorWithBooksList = new ArrayList<>();
+        for (Map.Entry<String, List<Book>> entry: authorAndBooksDict.entrySet()) {
+            AuthorWithBooks authorWithBooks = new AuthorWithBooks(
+                    entry.getKey(),
+                    entry.getValue().stream().map(s -> s.name).toArray(String[]::new)
+            );
+            authorWithBooksList.add(authorWithBooks);
+        }
+        return authorWithBooksList;
     }
 
     public static Book[] TestDataset1 = new Book[] {
